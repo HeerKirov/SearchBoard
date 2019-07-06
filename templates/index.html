@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Board</title>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui-css@2.4.1/semantic.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.19.0/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui-css@2.4.1/semantic.min.css">
+</head>
+<body>
+<div id="app">
+    <template v-if="word">
+        <div class="ui grid" style="margin-top: 80px">
+                <div class="ui four wide column"></div>
+                <div class="ui eight wide column">
+                    <div class="ui large feed">
+                        <div class="event" v-for="d in data">
+                            <div class="content">
+                                <div class="summary"><a v-text="d.title" target="_blank" :href="d.link"></a></div>
+                                <div style="margin-top: 0.5em" v-text="d.content"></div>
+                                <div style="margin-bottom: 1em" class="meta" v-text="d.source"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 2em">
+                        <a href="javascript: void(0)" v-if="!loading" @click="more">加载更多 ...</a>
+                    </div>
+                    <div class="ui centered inline loader" style="margin-bottom: 1em" :class="{active: loading}"></div>
+                    <div style="text-align: center">Search @ Heer Kirov</div>
+                </div>
+                <div class="ui four wide column"></div>
+            </div>
+
+        <div style="margin-top: 20px; position: fixed; top: 0; width: 100%">
+            <div class="ui grid">
+                <div class="ui four wide column"></div>
+                <div class="ui eight wide column">
+                    <div class="ui fluid icon input">
+                      <input type="text" v-model="textBox" @keypress.enter="query">
+                      <i class="search icon"></i>
+                    </div>
+                </div>
+                <div class="ui four wide column"></div>
+            </div>
+        </div>
+    </template>
+    <template v-else>
+        <div class="ui container" style="position: fixed; top: 50%; width: 100%; transform: translate(0, -100%)">
+            <div class="ui grid">
+                <div class="ui four wide column"></div>
+                <div class="ui eight wide column">
+                    <div class="ui fluid icon input">
+                      <input type="text" v-model="textBox" @keypress.enter="query">
+                      <i class="search icon"></i>
+                    </div>
+                </div>
+                <div class="ui four wide column"></div>
+            </div>
+        </div>
+        <div style="position: fixed; bottom: 10px; width: 100%; text-align: center;">Search @ Heer Kirov</div>
+    </template>
+</div>
+</body>
+<script>
+    let prefix = '{{ prefix }}'
+    let vue = new Vue({
+        el: '#app',
+        data: {
+            data: [],
+            page: 0,
+            word: '',
+            loading: false,
+            textBox: ''
+        },
+        methods: {
+            query() {
+                window.location.hash = '#' + this.textBox.trim()
+            },
+            updateQueryWord() {
+                this.textBox = this.word = decodeURIComponent(window.location.hash.substring(1))
+                this.data = []
+                this.page = 0
+                this.loading = true
+                axios.get(`${prefix}/s/`, {params: {word: this.word}}).then(res => {
+                    this.data = res.data.results
+                    this.page ++
+                }).finally(() => {
+                    this.loading = false
+                })
+            },
+            more() {
+                if(!this.loading) {
+                    this.loading = true
+                    axios.get(`${prefix}/s/`, {params: {word: this.word, offset: this.page * 10}}).then(res => {
+                        this.data = this.data.concat(res.data.results)
+                        this.page ++
+                    }).finally(() => {
+                        this.loading = false
+                    })
+                }
+            }
+        },
+        created() {
+            this.updateQueryWord()
+        }
+    })
+    window.onhashchange = vue.updateQueryWord
+</script>
+</html>
