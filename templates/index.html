@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Search Board</title>
+    <title>Search</title>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/semantic-ui-css@2.4.1/semantic.min.js"></script>
@@ -33,7 +33,7 @@
                 <div class="ui four wide column"></div>
             </div>
 
-        <div style="margin-top: 20px; position: fixed; top: 0; width: 100%">
+        <div style="padding-top: 20px; position: fixed; top: 0; width: 100%; background-color: #FFFFFF">
             <div class="ui grid">
                 <div class="ui four wide column"></div>
                 <div class="ui eight wide column">
@@ -80,6 +80,7 @@
             },
             updateQueryWord() {
                 this.textBox = this.word = decodeURIComponent(window.location.hash.substring(1))
+                document.title = this.word ? `Search - ${this.word}` : 'Search'
                 this.data = []
                 this.page = 0
                 this.loading = true
