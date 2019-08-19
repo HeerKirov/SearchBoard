@@ -31,8 +31,6 @@ def select(s, selector):
 def request_for_baidu(word, offset):
     ret = []
     res = requests.get('http://www.baidu.com/s', {'wd': word, 'pn': offset})
-    with open('wd.html', 'w') as f:
-        f.write(res.text)
     soup = BeautifulSoup(res.text, 'html.parser')
     result_container = soup.select('div.result.c-container')
     for result in result_container:

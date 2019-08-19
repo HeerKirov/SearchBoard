@@ -19,7 +19,15 @@
                         <div class="event" v-for="d in data">
                             <div class="content">
                                 <div class="summary"><a v-text="d.title" target="_blank" :href="d.link"></a></div>
-                                <div style="margin-top: 0.5em" v-text="d.content"></div>
+                                <div class="ui grid" style="margin-top: 0.5em" v-if="d.img">
+                                    <div class="ui two wide column">
+                                        <img :src="d.img" style="width: 100%">
+                                    </div>
+                                    <div class="ui fourteen wide column">
+                                        <div v-text="d.content"></div>
+                                    </div>
+                                </div>
+                                <div v-text="d.content" v-else style="margin-top: 0.5em"></div>
                                 <div style="margin-bottom: 1em" class="meta" v-text="d.source"></div>
                             </div>
                         </div>
