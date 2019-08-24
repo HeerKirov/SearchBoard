@@ -52,7 +52,7 @@ def request_for_baidu(word, offset):
     return ret
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/search/static/')
 config = load_config()
 
 PREFIX = config.get('prefix', '')
