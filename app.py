@@ -8,7 +8,7 @@ def load_config():
     ret = {}
     with open('config.properties') as f:
         for line in f.readlines():
-            splits = line.split('=', 2)
+            splits = line.rstrip('\n').split('=', 2)
             if len(splits) >= 2:
                 ret[splits[0]] = splits[1]
     return ret
@@ -52,11 +52,12 @@ def request_for_baidu(word, offset):
     return ret
 
 
-app = Flask(__name__, static_url_path='/search/static/')
 config = load_config()
-
 PREFIX = config.get('prefix', '')
 DEBUG = bool(config.get('debug', 'False'))
+
+
+app = Flask(__name__, static_url_path='%s/static/' % (PREFIX,))
 
 
 @app.route('%s/' % (PREFIX,))
